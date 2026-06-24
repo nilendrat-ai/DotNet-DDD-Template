@@ -1,5 +1,4 @@
 using DotNet.DDD.Template.Application.Common.Behaviours;
-using DotNet.DDD.Template.Domain.Aggregates.Orders;
 using DotNet.DDD.Template.Domain.Common;
 using DotNet.DDD.Template.Infrastructure.Persistence;
 using DotNet.DDD.Template.Infrastructure.Persistence.Repositories;
@@ -23,12 +22,12 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
-        // Unit of Work
+        // Unit of Work — AppDbContext implements IUnitOfWork
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
 
-        // Repositories
-        services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-        services.AddScoped<IRepository<Order>, EfRepository<Order>>();
+        // Concrete repositories — one per aggregate, injected directly into handlers
+        // Add new aggregate repositories here as the domain grows
+        services.AddScoped<OrderRepository>();
 
         return services;
     }
