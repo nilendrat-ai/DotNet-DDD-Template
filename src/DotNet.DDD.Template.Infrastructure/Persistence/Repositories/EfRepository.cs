@@ -1,34 +1,14 @@
-using DotNet.DDD.Template.Domain.Common;
-using Microsoft.EntityFrameworkCore;
-
-namespace DotNet.DDD.Template.Infrastructure.Persistence.Repositories;
-
-/// <summary>
-/// Generic EF Core repository implementation.
-/// </summary>
-public class EfRepository<T> : IRepository<T> where T : AggregateRoot
-{
-    protected readonly AppDbContext _context;
-    protected readonly DbSet<T> _dbSet;
-
-    public EfRepository(AppDbContext context)
-    {
-        _context = context;
-        _dbSet = context.Set<T>();
-    }
-
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await _dbSet.FindAsync(new object[] { id }, cancellationToken);
-
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
-        => await _dbSet.ToListAsync(cancellationToken);
-
-    public async Task AddAsync(T aggregate, CancellationToken cancellationToken = default)
-        => await _dbSet.AddAsync(aggregate, cancellationToken);
-
-    public void Update(T aggregate)
-        => _dbSet.Update(aggregate);
-
-    public void Remove(T aggregate)
-        => _dbSet.Remove(aggregate);
-}
+// REMOVED: Generic EfRepository<T> has been replaced with concrete,
+// query-specific repositories per aggregate (e.g. OrderRepository).
+//
+// Rationale: IRepository<T> forced all queries through GetByIdAsync/GetAllAsync,
+// leading to in-memory filtering or bypassed abstractions for real query needs.
+// A concrete repository per aggregate exposes only the queries that aggregate
+// actually needs, keeps EF Core includes/filters co-located with the data access,
+// and is still fully injectable and mockable.
+//
+// To add a new aggregate repository:
+//   1. Create src/Infrastructure/Persistence/Repositories/FooRepository.cs
+//   2. Inject AppDbContext, write query-specific methods (Include, Where, etc.)
+//   3. Register: services.AddScoped<FooRepository>() in DependencyInjection.cs
+//   4. Inject FooRepository directly into your MediatR handler constructor
