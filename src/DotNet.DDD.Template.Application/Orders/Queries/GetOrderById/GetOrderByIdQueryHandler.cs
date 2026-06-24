@@ -1,19 +1,17 @@
-using DotNet.DDD.Template.Domain.Aggregates.Orders;
-using DotNet.DDD.Template.Domain.Common;
+using DotNet.DDD.Template.Infrastructure.Persistence.Repositories;
 using MediatR;
 
 namespace DotNet.DDD.Template.Application.Orders.Queries.GetOrderById;
 
 public sealed class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto?>
 {
-    private readonly IRepository<Order> _orderRepository;
+    private readonly OrderRepository _orders;
 
-    public GetOrderByIdQueryHandler(IRepository<Order> orderRepository)
-        => _orderRepository = orderRepository;
+    public GetOrderByIdQueryHandler(OrderRepository orders) => _orders = orders;
 
     public async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
+        var order = await _orders.GetByIdAsync(request.OrderId, cancellationToken);
         if (order is null) return null;
 
         return new OrderDto(
