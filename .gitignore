@@ -1,0 +1,23 @@
+# Build
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+.vs/
+
+# Packages
+packages/
+*.nupkg
+
+# Secrets
+appsettings.Development.json
+secrets.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Rider / VS Code
+.idea/
+.vscode/
+*.DotSettings.user
